@@ -2,17 +2,30 @@
 #include <stdio.h>
 #include <time.h>
 
-float train[] = {
-    2, 4, 6, 12, 10, 20,
-};
-
-size_t train_count = sizeof(train) / sizeof(train[0]);
+#define N 10
 
 int main() {
 
   srand(time(0));
-  float *result = ln_gradient_descent(train, train_count);
 
-  printf("%f\n", ln_MSE(train, result[0], result[1], train_count));
+  float X[N][1];
+  float y[N];
+
+  for (int i = 0; i < N; ++i) {
+    X[i][0] = 2 * rand_float();
+    y[i] = 4 + 3 * X[i][0] + rand_float();
+  }
+
+  int rows = sizeof(X) / sizeof(X[0]);
+  int cols = sizeof(X[0]) / sizeof(X[0][0]);
+
+  ln_gradient_descent(rows, cols, X, y);
+
+  // float *result =
+  //     ln_gradient_descent(X, y, rows, cols, train_count, 100 * 1000);
+
+  // printf("%f, %f\n", result[0], result[1]);
+
+  // printf("%f\n", ln_MSE(train, result[0], result[1], train_count));
   return 0;
 }

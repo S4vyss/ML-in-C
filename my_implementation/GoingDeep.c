@@ -17,63 +17,45 @@ float ln_MSE(float *array, float a, float b, size_t size) {
   return error /= size;
 }
 
-void matrixMultiplication(float *matrix, float *vector, float *result, int rows,
-                          int cols) {
-  for (int i = 0; i < rows; ++i) {
-    result[i] = 0.0f;
-    for (int j = 0; j < cols; ++j) {
-      result[i] += matrix[i * cols + j] * vector[j];
+void ln_print(int n, float X[][n], int rows, int cols) {
+  printf("Array Structure:\n");
+  printf("[ \n");
+
+  for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+      printf("%8.2f ", X[i][j]);
+      printf("%i", j);
     }
+    printf("\n");
   }
+
+  printf("]\n");
 }
 
-float dotProduct(float *a, float *b, int size) {
-  float result = 0.0;
-  for (int i = 0; i < size; ++i) {
-    result += a[i] * b[i];
-  }
-  return result;
-}
+float *ln_gradient_descent(int rows, int n, float X[rows][n], float *y) {
+  /*
+   *
+   * first getting the X_b
+   * second dot product of X_b and theta
+   * third transpose X_b
+   * fourth dot product of third and second
+   * fifth multiply by 2/m
+   *
+   * */
 
-float *ln_gradient_descent(float *train, size_t train_count) {
-  float *theta = malloc(2 * sizeof(float));
-  theta[0] = rand_float();
-  theta[1] = rand_float();
+  // Getting X_b
 
-  float eta = 0.1;
-  int rows = 3;
-  int cols = 2;
+  int cols = n + 1;
+  float X_b[rows][cols];
 
-  float X_b[rows * (cols + 1)];
-  float y[rows];
-
-  for (int i = 0; i < rows; ++i) {
-    X_b[i * (cols + 1)] = 1.0;
-    for (int j = 0; j < cols; ++j) {
-      X_b[i * (cols + 1) + j + 1] = train[i * cols + j];
-    }
-    y[i] = train[i * cols + cols];
-  }
-
-  for (int i = 0; i < 100 * 1000; ++i) {
-    float X_b_dot_theta[rows];
-    matrixMultiplication(X_b, theta, X_b_dot_theta, rows, cols);
-
-    float gradients[rows];
-    for (int i = 0; i < rows; ++i) {
-      gradients[i] = X_b_dot_theta[i] - y[i];
-    }
-
-    float X_b_T_dot_gradients[cols];
-    float X_b_T[cols * rows];
-
-    matrixMultiplication(X_b_T, gradients, X_b_T_dot_gradients, cols, rows);
-
-    for (int i = 0; i < cols; ++i) {
-      theta[i] = theta[i] - eta * (2 / train_count * X_b_T_dot_gradients[i]);
+  for (size_t i = 0; i < rows; ++i) {
+    for (size_t j = 0; j < cols; ++j) {
+      X_b[i][j] = X[i][j];
+      X_b[i][cols - 1] = 1.0f;
     }
   }
-  return theta;
+
+  ln_print(cols, X_b, rows, cols);
 }
 
 float rand_float() { return (float)rand() / (float)RAND_MAX; }
