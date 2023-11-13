@@ -1,4 +1,5 @@
 #include "GoingDeep.h"
+#include <assert.h>
 #include <math.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -18,13 +19,12 @@ float ln_MSE(float *array, float a, float b, size_t size) {
 }
 
 void ln_print(int n, float X[][n], int rows, int cols) {
-  printf("Array Structure:\n");
+  printf("X_b Structure:\n");
   printf("[ \n");
 
   for (int i = 0; i < rows; i++) {
     for (int j = 0; j < cols; j++) {
       printf("%8.2f ", X[i][j]);
-      printf("%i", j);
     }
     printf("\n");
   }
@@ -35,8 +35,8 @@ void ln_print(int n, float X[][n], int rows, int cols) {
 float *ln_gradient_descent(int rows, int n, float X[rows][n], float *y) {
   /*
    *
-   * first getting the X_b
-   * second dot product of X_b and theta
+   * first getting the X_b done
+   * second dot product of X_b and theta done
    * third transpose X_b
    * fourth dot product of third and second
    * fifth multiply by 2/m
@@ -56,6 +56,22 @@ float *ln_gradient_descent(int rows, int n, float X[rows][n], float *y) {
   }
 
   ln_print(cols, X_b, rows, cols);
+
+  float theta[2] = {rand_float(), rand_float()};
+
+  assert((sizeof(theta) / sizeof(theta[0])) == cols);
+
+  float X_b_dot_theta[rows];
+
+  for (size_t i = 0; i < rows; ++i) {
+    X_b_dot_theta[i] = 0.0f;
+  }
+
+  for (size_t i = 0; i < rows; ++i) {
+    for (size_t j = 0; j < cols; ++j) {
+      X_b_dot_theta[i] += X_b[i][j] * theta[j];
+    }
+  }
 }
 
 float rand_float() { return (float)rand() / (float)RAND_MAX; }
