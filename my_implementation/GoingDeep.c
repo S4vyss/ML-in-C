@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-float ln_MSE(float *array, float a, float b, size_t size) {
+float MSE(float *array, float a, float b, size_t size) {
   float error = 0.0f;
   for (size_t i = 0; i < size; ++i) {
     float x = array[i];
@@ -32,8 +32,8 @@ void ln_print(int n, float X[][n], int rows, int cols) {
   printf("]\n");
 }
 
-float *ln_gradient_descent(int rows, int n, float X[rows][n], float *y,
-                           size_t train_count) {
+float *LinearRegression(int rows, int n, float X[rows][n], float *y,
+                        size_t train_count) {
   /*
    *
    * first getting the X_b done
@@ -57,7 +57,11 @@ float *ln_gradient_descent(int rows, int n, float X[rows][n], float *y,
     X_b[i][cols - 1] = 1.0f;
   }
 
-  float theta[2] = {rand_float(), rand_float()};
+  float *theta = (float *)malloc((n + 1) * sizeof(float));
+
+  for (int i = 0; i < n + 1; ++i) {
+    theta[i] = rand_float();
+  }
 
   assert((sizeof(theta) / sizeof(theta[0])) == cols);
 
@@ -107,6 +111,20 @@ float *ln_gradient_descent(int rows, int n, float X[rows][n], float *y,
   theta[0] = theta[1];
   theta[1] = temp;
 
-  return *theta;
+  return theta;
 }
+
+void LR_generate_data(float X[][2], float y[], int num_samples) {
+  for (int i = 0; i < num_samples; ++i) {
+    X[i][0] = 1.0f;
+
+    X[i][1] = rand_float();
+
+    y[i] = (i < num_samples / 2) ? 0.0f : 1.0f;
+  }
+}
+
+float LR_cost() {}
+
 float rand_float() { return (float)rand() / (float)RAND_MAX; }
+float sigmoidf(float x) { return 1.f / (1.f + expf(-x)); }
