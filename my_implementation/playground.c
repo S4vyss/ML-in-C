@@ -6,15 +6,27 @@ int main() {
 
   srand(time(0));
 
-  int num_samples = 10;
+  constexpr int num_samples = 10;
   float X[num_samples][2];
-  float y[num_samples];
+  float theta[2][1];
+  float result[num_samples][1];
+  float y[num_samples][1];
 
   LR_generate_data(X, y, num_samples);
+
+  for (int i = 0; i < 2; ++i) {
+    theta[i][0] = rand_float();
+  }
 
   printf("Sample Data:\n");
   for (int i = 0; i < num_samples; ++i) {
     printf("X[%d]: [%.2f, %.2f], y[%d]: %.2f\n", i, X[i][0], X[i][1], i, y[i]);
+  }
+
+  printf("After multiplication\n");
+  matrixMultiply(num_samples, 2, 2, 1, X, theta, result);
+  for (int i = 0; i < num_samples; ++i) {
+    printf("X[%d]: [%.2f, %.2f], theta[%d]: %.2f, result[%d]: %.3f\n", i, X[i][0], X[i][1], i, theta[i][0], i, result[i][0]);
   }
 
   return 0;

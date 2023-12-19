@@ -46,7 +46,7 @@ float *LinearRegression(int rows, int n, float X[rows][n], float *y,
 
   // Getting X_b
 
-  int cols = n + 1;
+  int const cols = n + 1;
   float X_b[rows][cols];
   float eta = 0.1;
 
@@ -124,7 +124,57 @@ void LR_generate_data(float X[][2], float y[], int num_samples) {
   }
 }
 
+float *LogisticRegression(int rows, int n, float X[rows][n], float *y,
+                        size_t train_count) {
+
+  /*
+   *
+   * First get the prediction, sigmoid(xT * theta)
+   * Then get the cost
+   * Create global transpose and matrix multiply functions (need to reuse them alot)
+   *
+   */
+
+  float theta[n + 1][1];
+  float X_T[n][rows];
+  // (n x rows) * (n + 1 x 1)
+  float X_T_theta_dot[];
+
+  for (int i = 0; i < n + 1; ++i) {
+    theta[i][0] = rand_float();
+  }
+
+
+}
+
 float LR_cost() {}
+
+void matrixMultiply(size_t rowsA, size_t colsA,
+                    size_t rowsB, size_t colsB,
+                    float A[rowsA][colsA],
+                    float B[rowsB][colsB],
+                    float dotProduct[rowsA][colsB]) {
+
+  // (rowsA x colsA) * (rowsB x colsB)
+  assert(rowsB == colsA);
+
+  for (size_t i = 0; i < rowsA; ++i) {
+    for (size_t j = 0; j < colsB; ++j) {
+      dotProduct[i][j] = 0.0f;
+      for (size_t k = 0; k < colsA; ++k) {
+        dotProduct[i][j] += A[i][k] * B[k][j];
+      }
+    }
+  }
+}
+
+void matrixTranspose(int cols, int rows, float X[rows][cols], float result[cols][rows]) {
+  for (size_t i = 0; i < cols; ++i) {
+    for (size_t j = 0; j < rows; ++j) {
+      result[i][j] = X[j][i];
+    }
+  }
+}
 
 float rand_float() { return (float)rand() / (float)RAND_MAX; }
 float sigmoidf(float x) { return 1.f / (1.f + expf(-x)); }
