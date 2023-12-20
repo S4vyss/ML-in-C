@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.27)
-project(ml C)
+project(C C)
 
 set(CMAKE_C_STANDARD 23)
 
-add_executable(amabatukam playground.c GoingDeep.c)
-target_link_libraries(amabatukam m)
+add_executable(C playground.c GoingDeep.c)
+target_link_libraries(C m)

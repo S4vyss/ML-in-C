@@ -1,7 +1,6 @@
 #include "GoingDeep.h"
 #include <assert.h>
 #include <math.h>
-#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -48,7 +47,7 @@ float *LinearRegression(int rows, int n, float X[rows][n], float *y,
 
   int const cols = n + 1;
   float X_b[rows][cols];
-  float eta = 0.1;
+  float eta = 0.1f;
 
   for (size_t i = 0; i < rows; ++i) {
     for (size_t j = 0; j < cols; ++j) {
@@ -114,45 +113,54 @@ float *LinearRegression(int rows, int n, float X[rows][n], float *y,
   return theta;
 }
 
-void LR_generate_data(float X[][2], float y[], int num_samples) {
+void LR_generate_data(float X[][2], float y[][1], int num_samples) {
   for (int i = 0; i < num_samples; ++i) {
     X[i][0] = 1.0f;
 
     X[i][1] = rand_float();
 
-    y[i] = (i < num_samples / 2) ? 0.0f : 1.0f;
+    y[i][0] = (i < num_samples / 2) ? 0.0f : 1.0f;
   }
 }
 
-float *LogisticRegression(int rows, int n, float X[rows][n], float *y,
-                        size_t train_count) {
+float* LogisticRegression(int rows, int n, float X[rows][n + 1], float y[rows][1],
+                          size_t train_count) {
 
   /*
    *
    * First get the prediction, sigmoid(xT * theta)
    * Then get the cost
-   * Create global transpose and matrix multiply functions (need to reuse them alot)
+   * Create global transpose and matrix multiply functions (need to reuse them
+   * alot)
    *
    */
 
   float theta[n + 1][1];
-  float X_T[n][rows];
-  // (n x rows) * (n + 1 x 1)
-  float X_T_theta_dot[];
+  // (rows x n + 1) * (n + 1 x 1)
+
+  float prediction[rows][1];
 
   for (int i = 0; i < n + 1; ++i) {
     theta[i][0] = rand_float();
   }
 
+  matrixMultiply(rows, n + 1, n + 1, 1, X, theta, prediction);
 
+  for (int i = 0; i < rows; ++i) {
+      prediction[i][0] = sigmoidf(prediction[i][0]);
+  }
+
+  for (int i = 0; i < rows; ++i) {
+      printf("X_theta_dot[%d]: %f\n", i, prediction[i][0]);
+  }
+
+  return 0;
 }
 
 float LR_cost() {}
 
-void matrixMultiply(size_t rowsA, size_t colsA,
-                    size_t rowsB, size_t colsB,
-                    float A[rowsA][colsA],
-                    float B[rowsB][colsB],
+void matrixMultiply(size_t rowsA, size_t colsA, size_t rowsB, size_t colsB,
+                    float A[rowsA][colsA], float B[rowsB][colsB],
                     float dotProduct[rowsA][colsB]) {
 
   // (rowsA x colsA) * (rowsB x colsB)
@@ -168,7 +176,8 @@ void matrixMultiply(size_t rowsA, size_t colsA,
   }
 }
 
-void matrixTranspose(int cols, int rows, float X[rows][cols], float result[cols][rows]) {
+void matrixTranspose(int cols, int rows, float X[rows][cols],
+                     float result[cols][rows]) {
   for (size_t i = 0; i < cols; ++i) {
     for (size_t j = 0; j < rows; ++j) {
       result[i][j] = X[j][i];
